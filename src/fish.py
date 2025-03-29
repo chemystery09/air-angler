@@ -44,6 +44,8 @@ class Fish:
         self.x = x
         self.y = y
         self.orientation = orientation
+        self.aleph = random.random() + .01
+        self.omega = 0
         # Choose a random color
         self.color = (
             random.randint(0, 255),
@@ -128,4 +130,9 @@ class Fish:
         """
         Hang the fish upside down.
         """
-        self.orientation = -math.pi / 2 + math.pi
+
+        desired_orientation = -math.pi / 2 + math.pi
+
+        self.omega += (self.orientation - desired_orientation) * .001 - self.omega * .0025 * self.aleph
+
+        self.orientation -= self.omega * .1

@@ -3,7 +3,7 @@ import math
 
 import pygame
 
-from fish import Fish
+from fish import *
 
 # activate the pygame library .
 pygame.init()
@@ -16,18 +16,17 @@ scrn = pygame.display.set_mode((X, Y))
 
 # Import the Fish class
 
-# Create a Fish instance
-fish = Fish(scrn, x=500, y=500)
+
 # Create a list of Fish instances
 fishes = [
-    Fish(scrn, x=200, y=200, orientation=math.pi/2),
-    Fish(scrn, x=400, y=300, orientation=math.pi/2),
-    Fish(scrn, x=600, y=400, orientation=math.pi/2),
-    Fish(scrn, x=800, y=500, orientation=math.pi/2)
+    Fish(scrn, x=200, y=200),
+    Fish(scrn, x=200, y=200),
+    Fish(scrn, x=200, y=200),
+    Fish(scrn, x=200, y=200)
 ]
 
 # Create a screen position array
-scrn_pos = [500, 500]
+scrn_pos = [0, 0]
 
 # Define parameters for circular motion
 radius = 100
@@ -55,12 +54,14 @@ while status:
     # Clear the screen
     scrn.fill((255, 255, 255))
 
+    random.shuffle(fishes)
+
     # Draw the fish
     for fish in fishes:
         fish.draw(scrn_pos)
         fish.hang_dead()
         
-    update_screen_position()
+    # update_screen_position()
 
     # Update the display
     pygame.display.flip()
