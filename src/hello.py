@@ -45,6 +45,7 @@ def update_screen_position() -> None:
 
 # Replace the single fish instance with the list
 # Main loop
+
 status = True
 while status:
     for i in pygame.event.get():
@@ -57,8 +58,8 @@ while status:
     # Draw the fish
     for fish in fishes:
         fish.draw(scrn_pos)
-        fish.rotate(angle_increment)
-
+        fish.hang_dead()
+        
     update_screen_position()
 
     # Update the display

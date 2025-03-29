@@ -123,3 +123,9 @@ class Fish:
         :param theta: The angle in radians to rotate the fish by.
         """
         self.orientation += theta
+
+    def hang_dead(self):
+        """
+        Hang the fish upside down.
+        """
+        self.orientation = -math.pi / 2 + math.pi
