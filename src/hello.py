@@ -53,6 +53,7 @@ while status:
     # Draw the fish
     for fish in fishes:
         fish.draw(scrn_pos)
+        fish.rotate(.05)
 
     update_screen_position()
 

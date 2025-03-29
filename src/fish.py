@@ -1,7 +1,9 @@
 import pygame
+import math
+
 
 class Fish:
-    def __init__(self, screen, x, y, orientation='right', color=(0, 0, 255), size=(50, 30)):
+    def __init__(self, screen, x, y, orientation = 0, color=(0, 0, 255), size=(50, 30)):
         """
         Initialize the Fish object.
         
@@ -20,6 +22,14 @@ class Fish:
         self.color = color
         self.size = size
 
+    def rotate(self, angle):
+        """
+        Rotate the fish by a given angle.
+        
+        :param angle: The angle to rotate the fish by.
+        """
+        self.orientation += angle
+
     def draw(self, screen_position=(0, 0)):
         """
         Draw the fish on the screen at its current position and orientation.
@@ -33,18 +43,22 @@ class Fish:
         pygame.draw.ellipse(self.screen, self.color, body)
 
         # Draw the tail
-        if self.orientation == 'right':
-            tail_points = [
-                (self.x, self.y + height // 2),
-                (self.x - width // 2, self.y),
-                (self.x - width // 2, self.y + height)
-            ]
-        else:  # orientation == 'left'
-            tail_points = [
-                (self.x + width, self.y + height // 2),
-                (self.x + width + width // 2, self.y),
-                (self.x + width + width // 2, self.y + height)
-            ]
+
+        tail_points = [
+            (0, height // 2),
+            (- width // 2, 0),
+            (- width // 2, height)
+        ]
+
+        # Rotate tail points by the orientation angle
+        rotated_tail_points = []
+        for point in tail_points:
+            rotated_x = point[0] * math.cos(math.radians(self.orientation)) - point[1] * math.sin(math.radians(self.orientation))
+            rotated_y = point[0] * math.sin(math.radians(self.orientation)) + point[1] * math.cos(math.radians(self.orientation))
+            rotated_tail_points.append((rotated_x + self.x, rotated_y + self.y))
+
+        tail_points = rotated_tail_points
+
         pygame.draw.polygon(self.screen, self.color, tail_points)
 
         self.x = self.x + screen_position[0]
