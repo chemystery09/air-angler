@@ -4,6 +4,7 @@ import math
 import pygame
 
 from fish import *
+import random
 
 # activate the pygame library .
 pygame.init()
@@ -20,9 +21,9 @@ scrn = pygame.display.set_mode((X, Y))
 # Create a list of Fish instances
 fishes = [
     Fish(scrn, x=200, y=200),
-    Fish(scrn, x=200, y=200),
-    Fish(scrn, x=200, y=200),
-    Fish(scrn, x=200, y=200)
+    Fish(scrn, x=400, y=400),
+    Fish(scrn, x=600, y=600),
+    Fish(scrn, x=800, y=800)
 ]
 
 # Create a screen position array
@@ -45,6 +46,7 @@ def update_screen_position() -> None:
 # Replace the single fish instance with the list
 # Main loop
 
+random.shuffle(fishes)
 status = True
 while status:
     for i in pygame.event.get():
@@ -54,7 +56,6 @@ while status:
     # Clear the screen
     scrn.fill((255, 255, 255))
 
-    random.shuffle(fishes)
 
     # Draw the fish
     for fish in fishes:

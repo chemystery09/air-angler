@@ -2,6 +2,7 @@ import pygame
 import math
 import random
 
+
 def ellipse_perimeter_points(center_x, center_y, width, height, num_points=10):
     """
     Generate points around the perimeter of an ellipse.
@@ -20,6 +21,7 @@ def ellipse_perimeter_points(center_x, center_y, width, height, num_points=10):
         y = center_y + (height / 2) * math.sin(angle)
         points.append((x, y))
     return points
+
 
 class Fish:
     def __init__(
@@ -44,7 +46,7 @@ class Fish:
         self.x = x
         self.y = y
         self.orientation = orientation
-        self.aleph = random.random() + .01
+        self.aleph = random.random() + 0.01
         self.omega = 0
         # Choose a random color
         self.color = (
@@ -58,8 +60,6 @@ class Fish:
         height = (width * 2) // 3
         self.size = (width, height)
 
-
-
     def draw(self, screen_position=(0, 0)) -> None:
         """
         Draw the fish on the screen at its current position and orientation.
@@ -70,7 +70,6 @@ class Fish:
         self.y -= screen_position[1]
 
         body = pygame.Rect(self.x, self.y, width, height)
-        
 
         # Draw the tail
 
@@ -79,8 +78,6 @@ class Fish:
             (self.x + width + width // 2, self.y),
             (self.x + width + width // 2, self.y + height),
         ]
-
-
 
         # Example usage of the function to trace the fish's body
         ellipse_points = ellipse_perimeter_points(
@@ -97,14 +94,12 @@ class Fish:
             translated_y = py - (self.y + height // 2)
 
             # Apply rotation
-            rotated_x = (
-            translated_x * math.cos(self.orientation)
-            - translated_y * math.sin(self.orientation)
-            )
-            rotated_y = (
-            translated_x * math.sin(self.orientation)
-            + translated_y * math.cos(self.orientation)
-            )
+            rotated_x = translated_x * math.cos(
+                self.orientation
+            ) - translated_y * math.sin(self.orientation)
+            rotated_y = translated_x * math.sin(
+                self.orientation
+            ) + translated_y * math.cos(self.orientation)
 
             # Translate point back
             final_x = rotated_x + (self.x + width // 2)
@@ -117,7 +112,7 @@ class Fish:
 
         self.x += screen_position[0]
         self.y += screen_position[1]
-    
+
     def rotate(self, theta):
         """
         Rotate the fish by a given angle in radians.
@@ -131,8 +126,10 @@ class Fish:
         Hang the fish upside down.
         """
 
-        desired_orientation = -math.pi / 2 + math.pi
+        desired_orientation = math.pi / 2
 
-        self.omega += (self.orientation - desired_orientation) * .001 - self.omega * .0025 * self.aleph
+        self.omega += (
+            self.orientation - desired_orientation
+        ) * 0.001 - self.omega * 0.0025 * self.aleph
 
-        self.orientation -= self.omega * .1
+        self.orientation -= self.omega * 0.1
