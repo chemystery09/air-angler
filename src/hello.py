@@ -3,8 +3,8 @@ import pygame
 
 # activate the pygame library .
 pygame.init()
-X = 600
-Y = 600
+X = 1000
+Y = 1000
 
 # create the display surface object
 # of specific dimension..e(X, Y).
