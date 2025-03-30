@@ -118,7 +118,7 @@ while status:
         #     fish.move(down=True)
 
         fish.draw(scrn_pos, r.fine)
-        fish.draw_AABB(scrn_pos)
+        # fish.draw_AABB(scrn_pos)
         # fish.hooked()
         fish.hang_dead()
         if (
@@ -144,7 +144,7 @@ while status:
 
     r.fine[0] = math.cos(t / 100) * 100
 
-    r.draw_AABB()
+    # r.draw_AABB()
 
     font = pygame.font.SysFont(None, 36)
     score_surface = font.render(
