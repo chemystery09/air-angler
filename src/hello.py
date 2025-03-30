@@ -73,6 +73,12 @@ going_down = True
 clock = pygame.time.Clock()
 
 random.shuffle(fishes)
+
+r = Rod(scrn, 0, -955.4000000000042)
+print(r.pos)
+
+r.trigger_reel()
+
 status = True
 while status:
     for i in pygame.event.get():
@@ -81,29 +87,41 @@ while status:
 
     # Clear the screen
     scrn.fill((255, 255, 255))
-    scrn.blit(background.image, background.pos)
+    scrn.blit(
+        background.image,
+        (background.pos[0] + scrn_pos[0], background.pos[1] + scrn_pos[1]),
+    )
 
-    if going_down:
-        background.move(up=True)
-    else:
-        background.move(down=True)
+    scrn_pos = r.reel_and_drop_itr()
 
-    if background.pos[1] < -4800:
-        going_down = False
+    # if going_down:
+    #     background.move(up=True)
+    # else:
+    #     background.move(down=True)
+
+    # if background.pos[1] < -4800:
+    #     going_down = False
 
     # Draw the fish
     for fish in fishes:
-        if going_down:
-            fish.move(up=True)
-        else:
-            fish.move(down=True)
-        
+        fish.move()
+        # if going_down:
+        #     fish.move(up=True)
+        # else:
+        #     fish.move(down=True)
+
         fish.draw(scrn_pos)
-        if any(f.collides(fish) for f in fishes):
-            fish.hooked()
-            fish.hang_dead()
+        fish.draw_AABB(scrn_pos)
+        # fish.hooked()
+        fish.hang_dead()
         if fish.pos[0] < fish_x_bounds[0] or fish.pos[0] > fish_x_bounds[1]:
             fish.direction = not fish.direction
+
+        if collides(fish, r, scrn_pos):
+            fish.hooked()
+
+    r.draw()
+    r.draw_AABB()
 
     # update_screen_position()
 

@@ -18,6 +18,7 @@ class GameObject:
         self.speed = speed
         self.image = image
         self.pos = image.get_rect().move(0, height)
+        self.size = self.image.get_size()
 
     # move the object.
     def move(self, *, up=False, down=False, left=False, right=False) -> None:  # noqa: ANN001
@@ -40,78 +41,101 @@ class GameObject:
         # if self.pos.top < 0:
         #     self.pos.top = HEIGHT - SPRITE_HEIGHT
 
-    def collides(self, other):
-        x_col = in_range(self.pos[0], other.pos[0], other.pos[0] + other.size[0])
-        x_col2 = in_range(
-            self.pos[0] + self.size[0], other.pos[0], other.pos[0] + other.size[0]
-        )
+    
+def collides(self, other, screen_position=(0, 0)):
 
-        y_col = in_range(self.pos[1], other.pos[1], other.pos[1] + other.size[1])
-        y_col2 = in_range(
-            self.pos[1] + self.size[1], other.pos[1], other.pos[1] + other.size[1]
-        )
-        return (x_col or x_col2) and (y_col or y_col2)
+    m_pos = self.get_corr_pos(screen_position)
+
+    o_pos = other.get_corr_pos(screen_position)
+    
+    m_size = self.get_corr_size()
+
+    o_size = other.get_corr_size()
+    x_col = in_range(m_pos[0], o_pos[0], o_pos[0] + o_size[0])
+    x_col2 = in_range(m_pos[0] + m_size[0], o_pos[0], o_pos[0] + o_size[0])
+
+    y_col = in_range(m_pos[1], o_pos[1], o_pos[1] + o_size[1])
+    y_col2 = in_range(m_pos[1] + m_size[1], o_pos[1], o_pos[1] + o_size[1])
+    return (x_col or x_col2) and (y_col or y_col2)
+    
+    
 
 
 def load_image(name):
     path = os.path.join(main_dir, "data", name)
-    return pygame.image.load(path).convert()
+    return pygame.image.load(path).convert_alpha()
 
 
 class Rod(GameObject):
-    def __init__(self, *args, **kwargs) -> None:
-        super(*args, **kwargs)
+    def __init__(self, screen, x, y) -> None:
+        
+        super().__init__(
+            load_image("fishingLine.png"), 0, 0
+        )
+
         self.is_dropping = False
+        
+        self.size = self.image.get_size()
+
+        self.pos = [x,y]
+        self.screen = screen
+        self.is_dropping, self.is_reeling, self.is_waiting = False, False, True
+
+        self.fine = [0, 0]
+        self.v = 0
+        self.render_pos = self.pos
 
 
-def main():
-    pygame.init()
-    clock = pygame.time.Clock()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    def draw(self, screen_position = (0, 0)) -> None:
+        """
+        Draw the fish on the screen at its current position and orientation.
+        """
+        width, height = self.size
 
-    fish1_img = load_image("fish1.png")
-    fish2_img = load_image("fish2.png")
-    fish3_img = load_image("fish3.png")
+        bobber_pos = (width // 2 + self.fine[0], height * 1.1)
 
-    # background = load_image("allfish.png")  # change me!
+        screen_center = (WIDTH // 2, HEIGHT // 2)
+        self.render_pos = (screen_center[0] - bobber_pos[0], screen_center[1] - bobber_pos[1])
 
-    # background = pygame.transform.scale2x(background)
-    # background = pygame.transform.scale2x(background)
+        # Show the image
+        self.screen.blit(self.image, self.render_pos)
 
-    # screen.blit(background, (0, 0))
+    def trigger_reel(self):
+        self.is_waiting = False
 
-    fish_objects = []
+    def reel_and_drop_itr(self):
 
-    for _ in range(random.randint(MIN_FISH, MAX_FISH)):
-        img = random.choice((fish1_img, fish2_img, fish3_img))
-        x = random.randint(0, 10)
-        fish_objects.append(GameObject(img, x * 40, x))
+        if (self.is_waiting):
+            return self.pos
 
-    chosen_fish_tmp = random.choice(fish_objects)
-    while True:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            chosen_fish_tmp.move(up=True)
-        if keys[pygame.K_DOWN]:
-            chosen_fish_tmp.move(down=True)
-        if keys[pygame.K_LEFT]:
-            chosen_fish_tmp.move(left=True)
-        if keys[pygame.K_RIGHT]:
-            chosen_fish_tmp.move(right=True)
-
-        # screen.blit(background, (0, 0))
-        for e in pygame.event.get():
-            if e.type == pygame.QUIT:
-                return
-        # for o in fish_objects:
-        #     screen.blit(background, o.pos)
-        for o in fish_objects:
-            screen.blit(o.image, o.pos)
-        clock.tick(60)
-        pygame.display.update()
-        pygame.time.delay(100)
+        if (not self.is_dropping and not self.is_reeling):
+            self.v = -27.5
 
 
-if __name__ == "__main__":
-    main()
-    pygame.quit()
+        if (self.v < 0):
+            self.v += 0.1
+            self.pos[1] += self.v
+            self.is_dropping = True
+            self.is_reeling = True
+        else:
+            self.is_dropping = False
+            self.is_reeling = True
+            # collision handling
+            self.pos[1] += 6
+
+        if (self.pos[1] >= -955.4000000000042):
+            self.is_reeling = False
+            self.is_waiting = True
+
+        return self.pos
+    
+    def draw_AABB(self):
+        pygame.draw.rect(self.screen, (255, 0, 0), (int((self.size[0] *.35)+self.render_pos[0]), 
+                                                    int(self.size[1] * .85 + self.render_pos[1]), 
+                                                    75, 115), 2)
+        
+    def get_corr_pos(self, screen_pos):
+        return (int((self.size[0] *.35)+self.render_pos[0]), int(self.size[1] * .85 + self.render_pos[1]))
+        
+    def get_corr_size(self):
+        return (75, 115)
