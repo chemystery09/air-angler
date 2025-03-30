@@ -97,6 +97,7 @@ class Rod(GameObject):
 
     def trigger_reel(self):
         self.is_waiting = False
+        self.pos[1] = -901
 
     def reel_and_drop_itr(self):
         if self.is_waiting:
@@ -116,9 +117,10 @@ class Rod(GameObject):
             # collision handling
             self.pos[1] += 6
 
-        if self.pos[1] >= -955.4000000000042:
+        if (self.pos[1] >= -900.4000000000042):
             self.is_reeling = False
             self.is_waiting = True
+            self.pos[1] = 0
 
         return self.pos
 

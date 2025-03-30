@@ -67,7 +67,8 @@ scroll_speed = 5
 fish_x_bounds = (400, 1300)
 fish_y_bounds = (1200, 5500)
 
-fishes = [
+def make_fish():
+    fishes = [
     Fish(
         scrn,
         random.randint(*fish_x_bounds),
@@ -77,6 +78,23 @@ fishes = [
         aimless_speed=random.uniform(scroll_speed * 0.5, scroll_speed * 1.5),
     )
     for _ in range(random.randint(30, 50))
+<<<<<<< HEAD
+    ]
+    return fishes
+
+fishes = make_fish()
+
+test_fish = min(fishes, key=lambda x: x.pos[1])
+
+rest_bg_img = pygame.image.load("src/data/bg.png").convert()
+
+bg_img = pygame.image.load("src/data/bg (1).png").convert()
+
+sinking_background = GameObject(bg_img, 0, scroll_speed)
+
+rest_background = GameObject(rest_bg_img, 0, scroll_speed)
+
+=======
 ]
 for f in fishes:
     if not f.direction:
@@ -86,6 +104,7 @@ test_fish = min(fishes, key=lambda x: x.pos[1])
 
 bg_img = pygame.image.load("src/data/bg_sansrod.png").convert()
 background = GameObject(bg_img, 0, scroll_speed)
+>>>>>>> 90de386a0beaf154b14b192c43229fee117f0c40
 going_down = True
 
 GAME_START = False
@@ -93,15 +112,18 @@ clock = pygame.time.Clock()
 
 random.shuffle(fishes)
 
-r = Rod(scrn, 0, -955.4000000000042)
+r = Rod(scrn, 0, 0)
 
-r.trigger_reel()
+#r.trigger_reel()
 
 t = 0
 
 score = 0
 
 status = True
+
+triggered = False
+
 while status:
     success, image = cap.read()
     if not success:
@@ -162,6 +184,9 @@ while status:
 
     # Clear the screen
     scrn.fill((255, 255, 255))
+
+    background = rest_background if r.is_waiting else sinking_background
+
     scrn.blit(
         background.image,
         (background.pos[0] + scrn_pos[0], background.pos[1] + scrn_pos[1]),
