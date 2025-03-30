@@ -49,7 +49,7 @@ scrn_pos = [0, 0]
 # Main loop
 
 scroll_speed = 5
-fish_x_bounds = (500, 1400)
+fish_x_bounds = (400, 1300)
 fish_y_bounds = (1200, 5500)
 
 fishes = [
@@ -116,6 +116,7 @@ while status:
         fish.hang_dead()
         if fish.pos[0] < fish_x_bounds[0] or fish.pos[0] > fish_x_bounds[1]:
             fish.direction = not fish.direction
+            fish.image = pygame.transform.flip(fish.image, flip_x=True)
 
         if collides(fish, r, scrn_pos):
             fish.hooked()
