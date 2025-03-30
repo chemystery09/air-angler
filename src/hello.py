@@ -86,6 +86,8 @@ fishes = make_fish()
 
 test_fish = min(fishes, key=lambda x: x.pos[1])
 
+st = pygame.image.load("data/start.png").convert()
+
 rest_bg_img = pygame.image.load("data/bg.png").convert()
 
 bg_img = pygame.image.load("data/bg_sansrod.png").convert()
@@ -93,6 +95,9 @@ bg_img = pygame.image.load("data/bg_sansrod.png").convert()
 sinking_background = GameObject(bg_img, 0, scroll_speed)
 
 rest_background = GameObject(rest_bg_img, 0, scroll_speed)
+
+start_screen = GameObject(st, 0, scroll_speed)
+start_screen.image = pygame.transform.scale(start_screen.image, (X, Y))
 
 going_down = True
 
@@ -112,6 +117,9 @@ score = 0
 status = True
 
 triggered = False
+ct = 0
+
+begin = False
 
 while status:
     success, image = cap.read()
@@ -142,8 +150,11 @@ while status:
                     (index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2
                 )
                 if distance < ok_threshold:
-                    print("OK Gesture Detected - Game Start")
+                    begin = True
                     GAME_START = True
+                    r.trigger_reel()
+                    triggered = True
+                    ct += 1
             else:
                 wrist_x = int(
                     hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
@@ -162,6 +173,16 @@ while status:
                     > hand_landmarks.landmark[fingerfirstknuckle[i]].y
                     for i in range(4)
                 )
+
+    if (not begin):
+        scrn.blit(start_screen.image, (0,0))
+        # cam_surface = pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], "BGR")
+        # scrn.blit(cam_surface, (0, 0))
+
+
+        clock.tick(60)
+        pygame.display.flip()
+        continue
 
     if moving_left:
         r.fine[0] -= 10
@@ -219,6 +240,7 @@ while status:
     if (r.is_waiting and triggered):
         fishes = make_fish()
         triggered = False
+        GAME_START = False
 
     t += 1
 
@@ -227,7 +249,7 @@ while status:
     # r.draw_AABB()
 
 
-    
+
     font = pygame.font.SysFont(None, 36)
     score_surface = font.render(
         f"Score: {int(score)}",
@@ -238,13 +260,16 @@ while status:
             int(math.cos(t / 93) ** 2 * 255),
         ),
     )
-    scrn.blit(score_surface, (10, 10))
+    scrn.blit(score_surface, (X - score_surface.get_width() - 10, 10))
+    ct_text = font.render(f"Casts: {ct}", True, (0, 0, 0))
+    scrn.blit(ct_text, (X - ct_text.get_width() - 10, 50))
 
     # update_screen_position()
 
     # Update the display
     cam_surface = pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], "BGR")
     scrn.blit(cam_surface, (0, 0))
+
 
     clock.tick(60)
     pygame.display.flip()
