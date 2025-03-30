@@ -12,7 +12,7 @@ cap = cv2.VideoCapture(0)
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(max_num_hands=1)
 mp_draw = mp.solutions.drawing_utils
-sensitivity_threshold = 10
+sensitivity_threshold = 0
 previous_fingertip_positions = {}
 fingertips = [8, 12, 16, 20]
 fingerfirstknuckle = [5, 9, 13, 17]
@@ -124,12 +124,22 @@ while status:
                     print("OK Gesture Detected - Game Start")
                     GAME_START = True
             else:
+                left_threshold = frame.shape[1] // 3  # Left third of the camera view
+                right_threshold = 2 * frame.shape[1] // 3  # Right third of the camera view
                 wrist_x = int(hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x * frame.shape[1])
                 if previous_x_position is not None:
                     delta_x = wrist_x - previous_x_position
                     if abs(delta_x) >= sensitivity_threshold:
                         moving_left = delta_x < 0
                         moving_right = delta_x > 0
+                    elif wrist_x < left_threshold:
+                        moving_left = True
+                        moving_right = False 
+                        delta_x = 500
+                    elif wrist_x > right_threshold:
+                        moving_left = False
+                        moving_right = True
+                        delta_x = -500
                     else:
                         moving_left = moving_right = False
                 previous_x_position = wrist_x
@@ -138,10 +148,8 @@ while status:
                     for i in range(4)
                 )
 
-    if moving_left:
-        r.fine[0] -= 10 
-    elif moving_right: 
-        r.fine[0] += 10
+    if moving_left or moving_right:
+        r.fine[0] += delta_x
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             status = False
