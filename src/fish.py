@@ -42,7 +42,7 @@ class Fish(GameObject):
         :param size: The size of the fish as a tuple (width, height).
         :param screen_position: The position of the screen to adjust drawing.
         """
-        super().__init__(pygame.image.load(f'fish{random.randint(1,3)}.png'), 0 , 0)
+        super().__init__(pygame.image.load(f'src/data/fish{random.randint(1,3)}.png'), 0 , 0)
 
         self.flipped = False
         if random.random() > .5:
