@@ -46,8 +46,9 @@ class Fish(GameObject):
         :param size: The size of the fish as a tuple (width, height).
         :param screen_position: The position of the screen to adjust drawing.
         """
+        self.id = random.randint(1, 3)
         super().__init__(
-            pygame.image.load(f"src/data/fish{random.randint(1, 3)}.png").convert_alpha()
+            pygame.image.load(f"src/data/fish{self.id}.png").convert_alpha()
 , 0, 0
         )
 
@@ -103,6 +104,9 @@ class Fish(GameObject):
             self.pos[0] += self.aimless_swim_speed
         else:
             self.pos[0] -= self.aimless_swim_speed
+
+    def pts(self):
+        return self.id * 1.34
 
     def draw(self, screen_position=(0, 0), fine=(0,0)) -> None:
         """
