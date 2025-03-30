@@ -182,6 +182,12 @@ while status:
                     for i in range(4)
                 )
 
+    if (not begin):
+        scrn.blit(start_screen.image, (0,0))
+        clock.tick(60)
+        pygame.display.flip()
+        continue
+
     if moving_left or moving_right:
         r.fine[0] += delta_x
     for i in pygame.event.get():
