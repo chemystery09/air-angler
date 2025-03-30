@@ -32,6 +32,8 @@ class Fish(GameObject):
         y,
         orientation=0,
         speed=10,
+        direction=True,
+        aimless_speed=7
     ) -> None:
         """
         Initialize the Fish object.
@@ -84,7 +86,8 @@ class Fish(GameObject):
         self.size = (self.image.get_width(), self.image.get_height())
 
         self.speed = speed
-
+        self.aimless_swim_speed = aimless_speed
+        self.direction = direction
 
     def move(self, *, up=False, down=False, left=False, right=False) -> None:  # noqa: ANN001
         if right:
@@ -96,9 +99,10 @@ class Fish(GameObject):
         if up:
             self.pos[1] -= self.speed
 
-
-
-
+        if self.direction:
+            self.pos[0] += self.aimless_swim_speed
+        else:
+            self.pos[0] -= self.aimless_swim_speed
 
     def draw(self, screen_position=(0, 0)) -> None:
         """

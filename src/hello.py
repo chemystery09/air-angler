@@ -49,15 +49,26 @@ scrn_pos = [0, 0]
 # Main loop
 
 scroll_speed = 5
+fish_x_bounds = (500, 1400)
+fish_y_bounds = (1200, 5500)
 
 fishes = [
-    Fish(scrn, random.randint(500, 1400), random.randint(1200, 6000), speed=scroll_speed)
+    Fish(
+        scrn,
+        random.randint(*fish_x_bounds),
+        random.randint(*fish_y_bounds),
+        speed=scroll_speed,
+        direction=random.choice((True, False)),
+        aimless_speed=random.uniform(scroll_speed * 0.5, scroll_speed * 1.5),
+    )
     for _ in range(random.randint(30, 50))
 ]
 test_fish = min(fishes, key=lambda x: x.pos[1])
 
 bg_img = pygame.image.load("src/data/bg.png").convert()
 background = GameObject(bg_img, 0, scroll_speed)
+going_down = True
+
 
 clock = pygame.time.Clock()
 
@@ -76,21 +87,38 @@ while status:
 
     # Clear the screen
     scrn.fill((255, 255, 255))
-    scrn.blit(background.image, (background.pos[0] + scrn_pos[0], background.pos[1] + scrn_pos[1]))
+    scrn.blit(
+        background.image,
+        (background.pos[0] + scrn_pos[0], background.pos[1] + scrn_pos[1]),
+    )
 
     scrn_pos = r.reel_and_drop_itr()
-    
+
+    # if going_down:
+    #     background.move(up=True)
+    # else:
+    #     background.move(down=True)
+
+    # if background.pos[1] < -4800:
+    #     going_down = False
 
     # Draw the fish
     for fish in fishes:
+        fish.move()
+        # if going_down:
+        #     fish.move(up=True)
+        # else:
+        #     fish.move(down=True)
+
         fish.draw(scrn_pos)
         fish.draw_AABB(scrn_pos)
+        # fish.hooked()
         fish.hang_dead()
-        
-        if collides(fish, r, scrn_pos):    
-            fish.hooked()
+        if fish.pos[0] < fish_x_bounds[0] or fish.pos[0] > fish_x_bounds[1]:
+            fish.direction = not fish.direction
 
-        
+        if collides(fish, r, scrn_pos):
+            fish.hooked()
 
     r.draw()
     r.draw_AABB()
