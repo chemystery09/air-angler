@@ -64,7 +64,7 @@ scrn_pos = [0, 0]
 # Main loop
 
 scroll_speed = 5
-fish_x_bounds = (500, 1400)
+fish_x_bounds = (400, 1300)
 fish_y_bounds = (1200, 5500)
 
 fishes = [
@@ -94,6 +94,8 @@ r = Rod(scrn, 0, -955.4000000000042)
 r.trigger_reel()
 
 t = 0
+
+score = 0
 
 status = True
 while status:
@@ -171,9 +173,14 @@ while status:
         fish.hang_dead()
         if fish.pos[0] < fish_x_bounds[0] or fish.pos[0] > fish_x_bounds[1]:
             fish.direction = not fish.direction
+            fish.image = pygame.transform.flip(fish.image, flip_x=True)
 
         if collides(fish, r, scrn_pos) and not r.is_dropping and fist_detected:
+            if (not fish.dead):
+                score += fish.pts()
+            
             fish.hooked()
+            
 
     r.draw()
 
@@ -182,6 +189,10 @@ while status:
     r.fine[0] = math.cos(t / 100) * 100
     
     r.draw_AABB()
+
+    font = pygame.font.SysFont(None, 36)
+    score_surface = font.render(f"Score: {int(score)}", True, (int(math.sin(t / 100)**2 * 255), int(math.cos(t / 139)**2 * 255), int(math.cos(t / 93)**2 * 255)))
+    scrn.blit(score_surface, (10, 10))
 
     # update_screen_position()
 
