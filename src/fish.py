@@ -77,11 +77,9 @@ class Fish(GameObject):
             random.randint(0, 255),
             random.randint(0, 255),
         )
+        self.dead = False
 
-        # Choose size using a Gaussian distribution
-        width = max(10, int(random.gauss(30, 15)))
-        height = (width * 2) // 3
-        self.size = (width, height)
+        self.size = (self.image.get_width(), self.image.get_height())
 
     def draw(self, screen_position=(0, 0)) -> None:
         """
@@ -107,16 +105,20 @@ class Fish(GameObject):
         """
         self.orientation += theta
 
+    def hooked(self):
+        self.dead = True
+
     def hang_dead(self):
         """
         Hang the fish upside down.
         """
+        if (self.dead):
 
-        desired_orientation = math.pi / 2 * (-1, 1)[self.flipped]
+            desired_orientation = math.pi / 2 * (-1, 1)[self.flipped]
 
-        self.omega += (
-            self.orientation - desired_orientation
-        ) * 0.001 - self.omega * 0.0025 * self.aleph
+            self.omega += (
+                self.orientation - desired_orientation
+            ) * 0.001 - self.omega * 0.0025 * self.aleph
 
         self.orientation -= self.omega * 0.1
-        # print(self.orientation)
+        #print(self.orientation)
