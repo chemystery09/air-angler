@@ -23,7 +23,7 @@ fishes = [
     Fish(scrn, x=100, y=100),
     Fish(scrn, x=200, y=200),
     Fish(scrn, x=300, y=300),
-    Fish(scrn, x=400, y=400)
+    Fish(scrn, x=400, y=400),
 ]
 
 test_fish = Fish(scrn, x=200, y=400)
@@ -58,13 +58,12 @@ while status:
     # Clear the screen
     scrn.fill((255, 255, 255))
 
-
     # Draw the fish
     for fish in fishes:
         fish.draw(scrn_pos)
-        if (test_fish.collides(fish)):
+        if test_fish.collides(fish):
             fish.hang_dead()
-        
+
     # update_screen_position()
 
     # Update the display

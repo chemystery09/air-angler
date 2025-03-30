@@ -9,8 +9,10 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 WIDTH, HEIGHT = 1920, 1080
 MIN_FISH, MAX_FISH = 10, 20
 
+
 def in_range(x, a, b):
     return max(a, min(x, b)) == x
+
 
 class GameObject:
     def __init__(self, image, height, speed) -> None:
@@ -41,13 +43,16 @@ class GameObject:
 
     def collides(self, other):
         x_col = in_range(self.pos[0], other.pos[0], other.pos[0] + other.size[0])
-        x_col2 = in_range(self.pos[0] + self.size[0], other.pos[0], other.pos[0] + other.size[0])
-        
-        y_col =  in_range(self.pos[1], other.pos[1], other.pos[1] + other.size[1])
-        y_col2 = in_range(self.pos[1] + self.size[1], other.pos[1], other.pos[1] + other.size[1])
+        x_col2 = in_range(
+            self.pos[0] + self.size[0], other.pos[0], other.pos[0] + other.size[0]
+        )
+
+        y_col = in_range(self.pos[1], other.pos[1], other.pos[1] + other.size[1])
+        y_col2 = in_range(
+            self.pos[1] + self.size[1], other.pos[1], other.pos[1] + other.size[1]
+        )
         return x_col and y_col and x_col2 and y_col2
 
-        
 
 def load_image(name):
     path = os.path.join(main_dir, "data", name)

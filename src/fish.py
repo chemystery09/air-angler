@@ -3,6 +3,7 @@ import math
 import random
 from rod import *
 
+
 def ellipse_perimeter_points(center_x, center_y, width, height, num_points=10):
     """
     Generate points around the perimeter of an ellipse.
@@ -42,10 +43,12 @@ class Fish(GameObject):
         :param size: The size of the fish as a tuple (width, height).
         :param screen_position: The position of the screen to adjust drawing.
         """
-        super().__init__(pygame.image.load(f'src/data/fish{random.randint(1,3)}.png'), 0 , 0)
+        super().__init__(
+            pygame.image.load(f"src/data/fish{random.randint(1, 3)}.png"), 0, 0
+        )
 
         self.flipped = False
-        if random.random() > .5:
+        if random.random() > 0.5:
             self.flipped = True
             self.image = pygame.transform.flip(self.image, True, False)
 
@@ -54,14 +57,17 @@ class Fish(GameObject):
         self.aleph = random.random() + 1
         self.omega = 0
 
-        self.pos = [x,y]
+        self.pos = [x, y]
 
         # Set the size for the image
 
         SCALE_FAC = 5
 
-        DEFAULT_IMAGE_SIZE = (self.image.get_width() // SCALE_FAC, self.image.get_height() // SCALE_FAC)
-        
+        DEFAULT_IMAGE_SIZE = (
+            self.image.get_width() // SCALE_FAC,
+            self.image.get_height() // SCALE_FAC,
+        )
+
         # Scale the image to your needed size
         self.image = pygame.transform.scale(self.image, DEFAULT_IMAGE_SIZE)
 
@@ -82,13 +88,16 @@ class Fish(GameObject):
         Draw the fish on the screen at its current position and orientation.
         """
         width, height = self.size
-       
-        rotated_image = pygame.transform.rotate(self.image, math.degrees(self.orientation))
-        new_rect = rotated_image.get_rect(center = self.image.get_rect(topleft = self.pos).center)
+
+        rotated_image = pygame.transform.rotate(
+            self.image, math.degrees(self.orientation)
+        )
+        new_rect = rotated_image.get_rect(
+            center=self.image.get_rect(topleft=self.pos).center
+        )
 
         # Show the image
         self.screen.blit(rotated_image, new_rect)
-
 
     def rotate(self, theta):
         """
@@ -110,4 +119,4 @@ class Fish(GameObject):
         ) * 0.001 - self.omega * 0.0025 * self.aleph
 
         self.orientation -= self.omega * 0.1
-        #print(self.orientation)
+        # print(self.orientation)
