@@ -31,6 +31,7 @@ class Fish(GameObject):
         x,
         y,
         orientation=0,
+        speed=10,
     ) -> None:
         """
         Initialize the Fish object.
@@ -81,6 +82,23 @@ class Fish(GameObject):
 
         self.size = (self.image.get_width(), self.image.get_height())
 
+        self.speed = speed
+
+
+    def move(self, *, up=False, down=False, left=False, right=False) -> None:  # noqa: ANN001
+        if right:
+            self.pos[0] += self.speed
+        if left:
+            self.pos[0] -= self.speed
+        if down:
+            self.pos[1] += self.speed
+        if up:
+            self.pos[1] -= self.speed
+
+
+
+
+
     def draw(self, screen_position=(0, 0)) -> None:
         """
         Draw the fish on the screen at its current position and orientation.
@@ -112,8 +130,7 @@ class Fish(GameObject):
         """
         Hang the fish upside down.
         """
-        if (self.dead):
-
+        if self.dead:
             desired_orientation = math.pi / 2 * (-1, 1)[self.flipped]
 
             self.omega += (
@@ -121,4 +138,4 @@ class Fish(GameObject):
             ) * 0.001 - self.omega * 0.0025 * self.aleph
 
         self.orientation -= self.omega * 0.1
-        #print(self.orientation)
+        # print(self.orientation)
