@@ -1,12 +1,12 @@
 # importing required library
 import math
+import random
 
+import cv2
+import mediapipe as mp
 import pygame
 
 from fish import *
-import random
-import cv2
-import mediapipe as mp
 
 cap = cv2.VideoCapture(0)
 mp_hands = mp.solutions.hands
@@ -115,26 +115,39 @@ triggered = False
 while status:
     success, image = cap.read()
     if not success:
-        break 
+        break
     frame = cv2.flip(image, 1)
     img_RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = hands.process(img_RGB)
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
             mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-            
+
             if not GAME_START:
                 thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-                index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
-                thumb_x, thumb_y = int(thumb_tip.x * frame.shape[1]), int(thumb_tip.y * frame.shape[0])
-                index_x, index_y = int(index_tip.x * frame.shape[1]), int(index_tip.y * frame.shape[0])
-                
-                distance = math.sqrt((index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2)
+                index_tip = hand_landmarks.landmark[
+                    mp_hands.HandLandmark.INDEX_FINGER_TIP
+                ]
+                thumb_x, thumb_y = (
+                    int(thumb_tip.x * frame.shape[1]),
+                    int(thumb_tip.y * frame.shape[0]),
+                )
+                index_x, index_y = (
+                    int(index_tip.x * frame.shape[1]),
+                    int(index_tip.y * frame.shape[0]),
+                )
+
+                distance = math.sqrt(
+                    (index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2
+                )
                 if distance < ok_threshold:
                     print("OK Gesture Detected - Game Start")
                     GAME_START = True
             else:
-                wrist_x = int(hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x * frame.shape[1])
+                wrist_x = int(
+                    hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
+                    * frame.shape[1]
+                )
                 if previous_x_position is not None:
                     delta_x = wrist_x - previous_x_position
                     if abs(delta_x) >= sensitivity_threshold:
@@ -144,13 +157,14 @@ while status:
                         moving_left = moving_right = False
                 previous_x_position = wrist_x
                 fist_detected = all(
-                    hand_landmarks.landmark[fingertips[i]].y > hand_landmarks.landmark[fingerfirstknuckle[i]].y
+                    hand_landmarks.landmark[fingertips[i]].y
+                    > hand_landmarks.landmark[fingerfirstknuckle[i]].y
                     for i in range(4)
                 )
 
     if moving_left:
-        r.fine[0] -= 10 
-    elif moving_right: 
+        r.fine[0] -= 10
+    elif moving_right:
         r.fine[0] += 10
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
@@ -189,7 +203,7 @@ while status:
             fish.flipped = not fish.flipped
 
         if collides(fish, r, scrn_pos) and not r.is_dropping and fist_detected:
-            if (not fish.dead):
+            if not fish.dead:
                 score += fish.pts()
 
             fish.hooked()
@@ -231,5 +245,3 @@ while status:
 
     clock.tick(60)
     pygame.display.flip()
-
-

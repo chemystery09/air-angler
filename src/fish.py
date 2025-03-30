@@ -1,6 +1,8 @@
-import pygame
 import math
 import random
+
+import pygame
+
 from rod import *
 
 
@@ -26,14 +28,7 @@ def ellipse_perimeter_points(center_x, center_y, width, height, num_points=10):
 
 class Fish(GameObject):
     def __init__(
-        self,
-        screen,
-        x,
-        y,
-        orientation=0,
-        speed=10,
-        direction=True,
-        aimless_speed=7
+        self, screen, x, y, orientation=0, speed=10, direction=True, aimless_speed=7
     ) -> None:
         """
         Initialize the Fish object.
@@ -48,8 +43,7 @@ class Fish(GameObject):
         """
         self.id = random.randint(1, 3)
         super().__init__(
-            pygame.image.load(f"src/data/fish{self.id}.png").convert_alpha()
-, 0, 0
+            pygame.image.load(f"src/data/fish{self.id}.png").convert_alpha(), 0, 0
         )
 
         self.flipped = False
@@ -108,7 +102,7 @@ class Fish(GameObject):
     def pts(self):
         return self.id * 1.34
 
-    def draw(self, screen_position=(0, 0), fine=(0,0)) -> None:
+    def draw(self, screen_position=(0, 0), fine=(0, 0)) -> None:
         """
         Draw the fish on the screen at its current position and orientation.
         """
@@ -123,18 +117,17 @@ class Fish(GameObject):
             center=self.image.get_rect(topleft=self.pos).center
         )
 
-
         # Show the image
-        if (not self.dead):
-            self.screen.blit(rotated_image, [screen_position[0] + new_rect[0], screen_position[1] + new_rect[1]])
+        if not self.dead:
+            self.screen.blit(
+                rotated_image,
+                [screen_position[0] + new_rect[0], screen_position[1] + new_rect[1]],
+            )
         else:
             screen_rect = self.screen.get_rect()
             new_rect.center = screen_rect.center
             self.screen.blit(rotated_image, (new_rect[0] - fine[0], new_rect[1] - 200))
 
-    
-    
-    
     def rotate(self, theta):
         """
         Rotate the fish by a given angle in radians.
@@ -158,7 +151,7 @@ class Fish(GameObject):
             ) * 0.01 - self.omega * 0.025 * self.aleph
 
         self.orientation -= self.omega * 0.1
-        #print(self.orientation)
+        # print(self.orientation)
 
     def draw_AABB(self, screen_position=(0, 0)) -> None:
         """
@@ -175,6 +168,6 @@ class Fish(GameObject):
 
     def get_corr_pos(self, screen_pos):
         return (self.pos[0] + screen_pos[0], self.pos[1] + screen_pos[1])
-    
+
     def get_corr_size(self):
         return self.size
