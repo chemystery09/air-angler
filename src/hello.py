@@ -52,7 +52,8 @@ scroll_speed = 5
 fish_x_bounds = (400, 1300)
 fish_y_bounds = (1200, 5500)
 
-fishes = [
+def make_fish():
+    fishes = [
     Fish(
         scrn,
         random.randint(*fish_x_bounds),
@@ -62,11 +63,21 @@ fishes = [
         aimless_speed=random.uniform(scroll_speed * 0.5, scroll_speed * 1.5),
     )
     for _ in range(random.randint(30, 50))
-]
+    ]
+    return fishes
+
+fishes = make_fish()
+
 test_fish = min(fishes, key=lambda x: x.pos[1])
 
-bg_img = pygame.image.load("src/data/bg.png").convert()
-background = GameObject(bg_img, 0, scroll_speed)
+rest_bg_img = pygame.image.load("src/data/bg.png").convert()
+
+bg_img = pygame.image.load("src/data/bg (1).png").convert()
+
+sinking_background = GameObject(bg_img, 0, scroll_speed)
+
+rest_background = GameObject(rest_bg_img, 0, scroll_speed)
+
 going_down = True
 
 
@@ -74,22 +85,36 @@ clock = pygame.time.Clock()
 
 random.shuffle(fishes)
 
-r = Rod(scrn, 0, -955.4000000000042)
+r = Rod(scrn, 0, 0)
 
-r.trigger_reel()
+#r.trigger_reel()
 
 t = 0
 
 score = 0
 
 status = True
+
+triggered = False
+
 while status:
+
+    if (t == 100):
+        r.trigger_reel()
+        triggered = True
+    
+    if (triggered and r.is_waiting):
+        fishes = make_fish()
+
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             status = False
 
     # Clear the screen
     scrn.fill((255, 255, 255))
+
+    background = rest_background if r.is_waiting else sinking_background
+
     scrn.blit(
         background.image,
         (background.pos[0] + scrn_pos[0], background.pos[1] + scrn_pos[1]),
@@ -114,12 +139,12 @@ while status:
         #     fish.move(down=True)
 
         fish.draw(scrn_pos, r.fine)
-        fish.draw_AABB(scrn_pos)
+        #fish.draw_AABB(scrn_pos)
         # fish.hooked()
         fish.hang_dead()
         if fish.pos[0] < fish_x_bounds[0] or fish.pos[0] > fish_x_bounds[1]:
             fish.direction = not fish.direction
-            fish.image = pygame.transform.flip(fish.image, flip_x=True)
+            fish.image = pygame.transform.flip(fish.image, flip_x=True, flip_y=False)
 
         if collides(fish, r, scrn_pos) and not r.is_dropping:
             if (not fish.dead):
@@ -127,18 +152,19 @@ while status:
             
             fish.hooked()
             
-
-    r.draw()
+    if (not r.is_waiting):
+        r.draw()
 
     t += 1
     
     r.fine[0] = math.cos(t / 100) * 100
     
-    r.draw_AABB()
+    #r.draw_AABB()
 
-    font = pygame.font.SysFont(None, 36)
+    font = pygame.font.SysFont(None, 36*3)
     score_surface = font.render(f"Score: {int(score)}", True, (int(math.sin(t / 100)**2 * 255), int(math.cos(t / 139)**2 * 255), int(math.cos(t / 93)**2 * 255)))
-    scrn.blit(score_surface, (10, 10))
+    score_rect = score_surface.get_rect(topright=(X - 10, 10))
+    scrn.blit(score_surface, score_rect)
 
     # update_screen_position()
 
