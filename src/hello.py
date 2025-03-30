@@ -8,8 +8,8 @@ import random
 
 # activate the pygame library .
 pygame.init()
-X = 500
-Y = 500
+X = 1280
+Y = 720
 
 # create the display surface object
 # of specific dimension..e(X, Y).
