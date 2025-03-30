@@ -28,7 +28,14 @@ def ellipse_perimeter_points(center_x, center_y, width, height, num_points=10):
 
 class Fish(GameObject):
     def __init__(
-        self, screen, x, y, orientation=0, speed=10, direction=True, aimless_speed=7,
+        self,
+        screen,
+        x,
+        y,
+        orientation=0,
+        speed=10,
+        direction=True,
+        aimless_speed=7,
     ) -> None:
         """
         Initialize the Fish object.
@@ -43,7 +50,9 @@ class Fish(GameObject):
         """
         self.id = random.randint(1, 3)
         super().__init__(
-            pygame.image.load(f"data/fish{self.id}.png").convert_alpha(), 0, 0,
+            pygame.image.load(f"data/fish{self.id}.png").convert_alpha(),
+            0,
+            0,
         )
 
         self.flipped = False
@@ -110,7 +119,8 @@ class Fish(GameObject):
         _width, _height = self.size
 
         rotated_image = pygame.transform.rotate(
-            self.image, math.degrees(self.orientation),
+            self.image,
+            math.degrees(self.orientation),
         )
 
         new_rect = rotated_image.get_rect(

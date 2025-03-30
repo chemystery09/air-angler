@@ -158,8 +158,13 @@ while status:
                     ct += 1
             else:
                 left_threshold = frame.shape[1] // 3  # Left third of the camera view
-                right_threshold = 2 * frame.shape[1] // 3  # Right third of the camera view
-                wrist_x = int(hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x * frame.shape[1])
+                right_threshold = (
+                    2 * frame.shape[1] // 3
+                )  # Right third of the camera view
+                wrist_x = int(
+                    hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
+                    * frame.shape[1],
+                )
                 if previous_x_position is not None:
                     delta_x = wrist_x - previous_x_position
                     if abs(delta_x) >= sensitivity_threshold:
@@ -167,7 +172,7 @@ while status:
                         moving_right = delta_x > 0
                     elif wrist_x < left_threshold:
                         moving_left = True
-                        moving_right = False 
+                        moving_right = False
                         delta_x = 500
                     elif wrist_x > right_threshold:
                         moving_left = False
@@ -182,8 +187,8 @@ while status:
                     for i in range(4)
                 )
 
-    if (not begin):
-        scrn.blit(start_screen.image, (0,0))
+    if not begin:
+        scrn.blit(start_screen.image, (0, 0))
         clock.tick(60)
         pygame.display.flip()
         continue
@@ -232,7 +237,9 @@ while status:
             fish.hooked()
             if fish.flipped:
                 fish.image = pygame.transform.flip(
-                    fish.image, flip_x=True, flip_y=False,
+                    fish.image,
+                    flip_x=True,
+                    flip_y=False,
                 )
 
     if not r.is_waiting:
