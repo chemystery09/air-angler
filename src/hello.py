@@ -63,9 +63,13 @@ fishes = [
     )
     for _ in range(random.randint(30, 50))
 ]
+for f in fishes:
+    if not f.direction:
+        f.flipped = False
+        f.image = pygame.transform.flip(f.image, flip_x=True, flip_y=False)
 test_fish = min(fishes, key=lambda x: x.pos[1])
 
-bg_img = pygame.image.load("src/data/bg.png").convert()
+bg_img = pygame.image.load("src/data/bg_sansrod.png").convert()
 background = GameObject(bg_img, 0, scroll_speed)
 going_down = True
 
@@ -115,19 +119,26 @@ while status:
         fish.draw_AABB(scrn_pos)
         # fish.hooked()
         fish.hang_dead()
-        if fish.pos[0] < fish_x_bounds[0] or fish.pos[0] > fish_x_bounds[1]:
+        if (
+            fish.pos[0] < fish_x_bounds[0] or fish.pos[0] > fish_x_bounds[1]
+        ) and not fish.dead:
             fish.direction = not fish.direction
-            fish.image = pygame.transform.flip(fish.image, flip_x=True)
+            fish.image = pygame.transform.flip(fish.image, flip_x=True, flip_y=False)
+            fish.flipped = not fish.flipped
 
         if collides(fish, r, scrn_pos) and not r.is_dropping:
             fish.hooked()
+            if fish.flipped:
+                fish.image = pygame.transform.flip(
+                    fish.image, flip_x=True, flip_y=False
+                )
 
     r.draw()
 
     t += 1
-    
+
     r.fine[0] = math.cos(t / 100) * 100
-    
+
     r.draw_AABB()
 
     # update_screen_position()
