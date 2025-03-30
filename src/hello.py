@@ -69,18 +69,18 @@ fish_y_bounds = (1200, 5500)
 
 
 def make_fish():
-    fishes = [
-    Fish(
-        scrn,
-        random.randint(*fish_x_bounds),
-        random.randint(*fish_y_bounds),
-        speed=scroll_speed,
-        direction=random.choice((True, False)),
-        aimless_speed=random.uniform(scroll_speed * 0.5, scroll_speed * 1.5),
-    )
-    for _ in range(random.randint(30, 50))
+    return [
+        Fish(
+            scrn,
+            random.randint(*fish_x_bounds),
+            random.randint(*fish_y_bounds),
+            speed=scroll_speed,
+            direction=random.choice((True, False)),
+            aimless_speed=random.uniform(scroll_speed * 0.5, scroll_speed * 1.5),
+        )
+        for _ in range(random.randint(30, 50))
     ]
-    return fishes
+
 
 fishes = make_fish()
 
@@ -147,7 +147,7 @@ while status:
                 )
 
                 distance = math.sqrt(
-                    (index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2
+                    (index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2,
                 )
                 if distance < ok_threshold:
                     begin = True
@@ -158,7 +158,7 @@ while status:
             else:
                 wrist_x = int(
                     hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
-                    * frame.shape[1]
+                    * frame.shape[1],
                 )
                 if previous_x_position is not None:
                     delta_x = wrist_x - previous_x_position
@@ -174,11 +174,10 @@ while status:
                     for i in range(4)
                 )
 
-    if (not begin):
-        scrn.blit(start_screen.image, (0,0))
+    if not begin:
+        scrn.blit(start_screen.image, (0, 0))
         # cam_surface = pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], "BGR")
         # scrn.blit(cam_surface, (0, 0))
-
 
         clock.tick(60)
         pygame.display.flip()
@@ -203,7 +202,6 @@ while status:
     )
 
     scrn_pos = r.reel_and_drop_itr()
-
 
     # Draw the fish
     for fish in fishes:
@@ -231,13 +229,13 @@ while status:
             fish.hooked()
             if fish.flipped:
                 fish.image = pygame.transform.flip(
-                    fish.image, flip_x=True, flip_y=False
+                    fish.image, flip_x=True, flip_y=False,
                 )
 
-    if (not r.is_waiting):
+    if not r.is_waiting:
         r.draw()
 
-    if (r.is_waiting and triggered):
+    if r.is_waiting and triggered:
         fishes = make_fish()
         triggered = False
         GAME_START = False
@@ -247,8 +245,6 @@ while status:
     r.fine[0] = math.cos(t / 100) * 100
 
     # r.draw_AABB()
-
-
 
     font = pygame.font.SysFont(None, 36)
     score_surface = font.render(
@@ -269,7 +265,6 @@ while status:
     # Update the display
     cam_surface = pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], "BGR")
     scrn.blit(cam_surface, (0, 0))
-
 
     clock.tick(60)
     pygame.display.flip()

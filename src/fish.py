@@ -28,7 +28,7 @@ def ellipse_perimeter_points(center_x, center_y, width, height, num_points=10):
 
 class Fish(GameObject):
     def __init__(
-        self, screen, x, y, orientation=0, speed=10, direction=True, aimless_speed=7
+        self, screen, x, y, orientation=0, speed=10, direction=True, aimless_speed=7,
     ) -> None:
         """
         Initialize the Fish object.
@@ -43,7 +43,7 @@ class Fish(GameObject):
         """
         self.id = random.randint(1, 3)
         super().__init__(
-            pygame.image.load(f"data/fish{self.id}.png").convert_alpha(), 0, 0
+            pygame.image.load(f"data/fish{self.id}.png").convert_alpha(), 0, 0,
         )
 
         self.flipped = False
@@ -107,14 +107,14 @@ class Fish(GameObject):
         Draw the fish on the screen at its current position and orientation.
         """
 
-        width, height = self.size
+        _width, _height = self.size
 
         rotated_image = pygame.transform.rotate(
-            self.image, math.degrees(self.orientation)
+            self.image, math.degrees(self.orientation),
         )
 
         new_rect = rotated_image.get_rect(
-            center=self.image.get_rect(topleft=self.pos).center
+            center=self.image.get_rect(topleft=self.pos).center,
         )
 
         # Show the image
@@ -128,7 +128,7 @@ class Fish(GameObject):
             new_rect.center = screen_rect.center
             self.screen.blit(rotated_image, (new_rect[0] - fine[0], new_rect[1] - 200))
 
-    def rotate(self, theta):
+    def rotate(self, theta) -> None:
         """
         Rotate the fish by a given angle in radians.
 
@@ -136,10 +136,10 @@ class Fish(GameObject):
         """
         self.orientation += theta
 
-    def hooked(self):
+    def hooked(self) -> None:
         self.dead = True
 
-    def hang_dead(self):
+    def hang_dead(self) -> None:
         """
         Hang the fish upside down.
         """

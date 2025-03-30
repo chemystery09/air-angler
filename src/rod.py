@@ -58,7 +58,7 @@ def collides(self, other, screen_position=(0, 0)):
 
 
 def load_image(name):
-    path = os.path.join(main_dir, "data", name)
+    os.path.join(main_dir, "data", name)
     return pygame.image.load(f"data/{name}").convert_alpha()
 
 
@@ -95,7 +95,7 @@ class Rod(GameObject):
         # Show the image
         self.screen.blit(self.image, self.render_pos)
 
-    def trigger_reel(self):
+    def trigger_reel(self) -> None:
         self.is_waiting = False
         self.pos[1] = -901
 
@@ -117,14 +117,14 @@ class Rod(GameObject):
             # collision handling
             self.pos[1] += 6
 
-        if (self.pos[1] >= -900.4000000000042):
+        if self.pos[1] >= -900.4000000000042:
             self.is_reeling = False
             self.is_waiting = True
             self.pos[1] = 0
 
         return self.pos
 
-    def draw_AABB(self):
+    def draw_AABB(self) -> None:
         pygame.draw.rect(
             self.screen,
             (255, 0, 0),
