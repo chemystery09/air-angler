@@ -84,6 +84,8 @@ r.trigger_reel()
 
 t = 0
 
+score = 0
+
 status = True
 while status:
     for i in pygame.event.get():
@@ -127,11 +129,15 @@ while status:
             fish.flipped = not fish.flipped
 
         if collides(fish, r, scrn_pos) and not r.is_dropping:
+            if (not fish.dead):
+                score += fish.pts()
+            
             fish.hooked()
             if fish.flipped:
                 fish.image = pygame.transform.flip(
                     fish.image, flip_x=True, flip_y=False
                 )
+            
 
     r.draw()
 
@@ -140,6 +146,10 @@ while status:
     r.fine[0] = math.cos(t / 100) * 100
 
     r.draw_AABB()
+
+    font = pygame.font.SysFont(None, 36)
+    score_surface = font.render(f"Score: {int(score)}", True, (int(math.sin(t / 100)**2 * 255), int(math.cos(t / 139)**2 * 255), int(math.cos(t / 93)**2 * 255)))
+    scrn.blit(score_surface, (10, 10))
 
     # update_screen_position()
 
