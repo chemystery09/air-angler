@@ -23,6 +23,7 @@ ok_threshold = 30
 
 # activate the pygame library .
 pygame.init()
+pygame.display.set_caption("Air Angler")
 X = 1920
 Y = 1080
 
