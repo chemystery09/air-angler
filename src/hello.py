@@ -26,7 +26,7 @@ fishes = [
     Fish(scrn, x=400, y=400)
 ]
 
-test_fish = Fish(scrn, x=200, y=400)
+test_fish = Fish(scrn, x=350, y=400)
 
 # Create a screen position array
 scrn_pos = [0, 0]
@@ -62,9 +62,11 @@ while status:
     # Draw the fish
     for fish in fishes:
         fish.draw(scrn_pos)
+
         if (test_fish.collides(fish)):
             fish.hang_dead()
-        
+
+
     # update_screen_position()
 
     # Update the display

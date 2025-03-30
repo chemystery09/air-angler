@@ -45,7 +45,7 @@ class GameObject:
         
         y_col =  in_range(self.pos[1], other.pos[1], other.pos[1] + other.size[1])
         y_col2 = in_range(self.pos[1] + self.size[1], other.pos[1], other.pos[1] + other.size[1])
-        return x_col and y_col and x_col2 and y_col2
+        return (x_col or x_col2) and (y_col or y_col2)
 
         
 
