@@ -78,7 +78,6 @@ def make_fish():
         aimless_speed=random.uniform(scroll_speed * 0.5, scroll_speed * 1.5),
     )
     for _ in range(random.randint(30, 50))
-<<<<<<< HEAD
     ]
     return fishes
 
@@ -88,23 +87,12 @@ test_fish = min(fishes, key=lambda x: x.pos[1])
 
 rest_bg_img = pygame.image.load("src/data/bg.png").convert()
 
-bg_img = pygame.image.load("src/data/bg (1).png").convert()
+bg_img = pygame.image.load("src/data/bg_sansrod.png").convert()
 
 sinking_background = GameObject(bg_img, 0, scroll_speed)
 
 rest_background = GameObject(rest_bg_img, 0, scroll_speed)
 
-=======
-]
-for f in fishes:
-    if not f.direction:
-        f.flipped = False
-        f.image = pygame.transform.flip(f.image, flip_x=True, flip_y=False)
-test_fish = min(fishes, key=lambda x: x.pos[1])
-
-bg_img = pygame.image.load("src/data/bg_sansrod.png").convert()
-background = GameObject(bg_img, 0, scroll_speed)
->>>>>>> 90de386a0beaf154b14b192c43229fee117f0c40
 going_down = True
 
 GAME_START = False
@@ -180,13 +168,6 @@ while status:
 
     scrn_pos = r.reel_and_drop_itr()
 
-    # if going_down:
-    #     background.move(up=True)
-    # else:
-    #     background.move(down=True)
-
-    # if background.pos[1] < -4800:
-    #     going_down = False
 
     # Draw the fish
     for fish in fishes:
@@ -217,7 +198,12 @@ while status:
                     fish.image, flip_x=True, flip_y=False
                 )
 
-    r.draw()
+    if (not r.is_waiting):
+        r.draw()
+
+    if (r.is_waiting and triggered):
+        fishes = make_fish()
+        triggered = False
 
     t += 1
 
