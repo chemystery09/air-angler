@@ -59,7 +59,7 @@ def collides(self, other, screen_position=(0, 0)):
 
 def load_image(name):
     path = os.path.join(main_dir, "data", name)
-    return pygame.image.load(path).convert_alpha()
+    return pygame.image.load(f"data/{name}").convert_alpha()
 
 
 class Rod(GameObject):

@@ -43,7 +43,7 @@ class Fish(GameObject):
         """
         self.id = random.randint(1, 3)
         super().__init__(
-            pygame.image.load(f"src/data/fish{self.id}.png").convert_alpha(), 0, 0
+            pygame.image.load(f"data/fish{self.id}.png").convert_alpha(), 0, 0
         )
 
         self.flipped = False

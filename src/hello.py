@@ -67,6 +67,7 @@ scroll_speed = 5
 fish_x_bounds = (400, 1300)
 fish_y_bounds = (1200, 5500)
 
+
 def make_fish():
     fishes = [
     Fish(
@@ -85,9 +86,9 @@ fishes = make_fish()
 
 test_fish = min(fishes, key=lambda x: x.pos[1])
 
-rest_bg_img = pygame.image.load("src/data/bg.png").convert()
+rest_bg_img = pygame.image.load("data/bg.png").convert()
 
-bg_img = pygame.image.load("src/data/bg_sansrod.png").convert()
+bg_img = pygame.image.load("data/bg_sansrod.png").convert()
 
 sinking_background = GameObject(bg_img, 0, scroll_speed)
 
@@ -102,7 +103,7 @@ random.shuffle(fishes)
 
 r = Rod(scrn, 0, 0)
 
-#r.trigger_reel()
+# r.trigger_reel()
 
 t = 0
 
