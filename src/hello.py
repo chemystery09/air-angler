@@ -8,8 +8,8 @@ import random
 
 # activate the pygame library .
 pygame.init()
-X = 1000
-Y = 1000
+X = 500
+Y = 500
 
 # create the display surface object
 # of specific dimension..e(X, Y).
@@ -20,10 +20,10 @@ scrn = pygame.display.set_mode((X, Y))
 
 # Create a list of Fish instances
 fishes = [
+    Fish(scrn, x=100, y=100),
     Fish(scrn, x=200, y=200),
-    Fish(scrn, x=400, y=400),
-    Fish(scrn, x=600, y=600),
-    Fish(scrn, x=800, y=800)
+    Fish(scrn, x=300, y=300),
+    Fish(scrn, x=400, y=400)
 ]
 
 # Create a screen position array

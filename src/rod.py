@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pygame
 
-main_dir = os.path.split(Path.resolve(__file__))[0]
+#main_dir = os.path.split(Path.resolve(__file__))[0]
 
 
 class GameObject:
@@ -34,9 +34,9 @@ class GameObject:
         #     self.pos.top = HEIGHT - SPRITE_HEIGHT
 
 
-def load_image(name):
-    path = os.path.join(main_dir, "data", name)
-    return pygame.image.load(path).convert()
+#def load_image(name):
+#    path = os.path.join(main_dir, "data", name)
+#    return pygame.image.load(path).convert()
 
 
 class Rod(GameObject):
