@@ -1,12 +1,12 @@
 # importing required library
 import math
+import random
 
+import cv2
+import mediapipe as mp
 import pygame
 
 from fish import *
-import random
-import cv2
-import mediapipe as mp
 
 cap = cv2.VideoCapture(0)
 mp_hands = mp.solutions.hands
@@ -67,25 +67,38 @@ scroll_speed = 5
 fish_x_bounds = (400, 1300)
 fish_y_bounds = (1200, 5500)
 
-fishes = [
-    Fish(
-        scrn,
-        random.randint(*fish_x_bounds),
-        random.randint(*fish_y_bounds),
-        speed=scroll_speed,
-        direction=random.choice((True, False)),
-        aimless_speed=random.uniform(scroll_speed * 0.5, scroll_speed * 1.5),
-    )
-    for _ in range(random.randint(30, 50))
-]
-for f in fishes:
-    if not f.direction:
-        f.flipped = False
-        f.image = pygame.transform.flip(f.image, flip_x=True, flip_y=False)
+
+def make_fish():
+    return [
+        Fish(
+            scrn,
+            random.randint(*fish_x_bounds),
+            random.randint(*fish_y_bounds),
+            speed=scroll_speed,
+            direction=random.choice((True, False)),
+            aimless_speed=random.uniform(scroll_speed * 0.5, scroll_speed * 1.5),
+        )
+        for _ in range(random.randint(30, 50))
+    ]
+
+
+fishes = make_fish()
+
 test_fish = min(fishes, key=lambda x: x.pos[1])
 
-bg_img = pygame.image.load("src/data/bg_sansrod.png").convert()
-background = GameObject(bg_img, 0, scroll_speed)
+st = pygame.image.load("data/start.png").convert()
+
+rest_bg_img = pygame.image.load("data/bg.png").convert()
+
+bg_img = pygame.image.load("data/bg_sansrod.png").convert()
+
+sinking_background = GameObject(bg_img, 0, scroll_speed)
+
+rest_background = GameObject(rest_bg_img, 0, scroll_speed)
+
+start_screen = GameObject(st, 0, scroll_speed)
+start_screen.image = pygame.transform.scale(start_screen.image, (X, Y))
+
 going_down = True
 
 GAME_START = False
@@ -93,36 +106,55 @@ clock = pygame.time.Clock()
 
 random.shuffle(fishes)
 
-r = Rod(scrn, 0, -955.4000000000042)
+r = Rod(scrn, 0, 0)
 
-r.trigger_reel()
+# r.trigger_reel()
 
 t = 0
 
 score = 0
 
 status = True
+
+triggered = False
+ct = 0
+
+begin = False
+
 while status:
     success, image = cap.read()
     if not success:
-        break 
+        break
     frame = cv2.flip(image, 1)
     img_RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = hands.process(img_RGB)
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
             mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-            
+
             if not GAME_START:
                 thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-                index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
-                thumb_x, thumb_y = int(thumb_tip.x * frame.shape[1]), int(thumb_tip.y * frame.shape[0])
-                index_x, index_y = int(index_tip.x * frame.shape[1]), int(index_tip.y * frame.shape[0])
-                
-                distance = math.sqrt((index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2)
+                index_tip = hand_landmarks.landmark[
+                    mp_hands.HandLandmark.INDEX_FINGER_TIP
+                ]
+                thumb_x, thumb_y = (
+                    int(thumb_tip.x * frame.shape[1]),
+                    int(thumb_tip.y * frame.shape[0]),
+                )
+                index_x, index_y = (
+                    int(index_tip.x * frame.shape[1]),
+                    int(index_tip.y * frame.shape[0]),
+                )
+
+                distance = math.sqrt(
+                    (index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2,
+                )
                 if distance < ok_threshold:
-                    print("OK Gesture Detected - Game Start")
+                    begin = True
                     GAME_START = True
+                    r.trigger_reel()
+                    triggered = True
+                    ct += 1
             else:
                 left_threshold = frame.shape[1] // 3  # Left third of the camera view
                 right_threshold = 2 * frame.shape[1] // 3  # Right third of the camera view
@@ -144,7 +176,8 @@ while status:
                         moving_left = moving_right = False
                 previous_x_position = wrist_x
                 fist_detected = all(
-                    hand_landmarks.landmark[fingertips[i]].y > hand_landmarks.landmark[fingerfirstknuckle[i]].y
+                    hand_landmarks.landmark[fingertips[i]].y
+                    > hand_landmarks.landmark[fingerfirstknuckle[i]].y
                     for i in range(4)
                 )
 
@@ -156,20 +189,15 @@ while status:
 
     # Clear the screen
     scrn.fill((255, 255, 255))
+
+    background = rest_background if r.is_waiting else sinking_background
+
     scrn.blit(
         background.image,
         (background.pos[0] + scrn_pos[0], background.pos[1] + scrn_pos[1]),
     )
 
     scrn_pos = r.reel_and_drop_itr()
-
-    # if going_down:
-    #     background.move(up=True)
-    # else:
-    #     background.move(down=True)
-
-    # if background.pos[1] < -4800:
-    #     going_down = False
 
     # Draw the fish
     for fish in fishes:
@@ -180,7 +208,7 @@ while status:
         #     fish.move(down=True)
 
         fish.draw(scrn_pos, r.fine)
-        fish.draw_AABB(scrn_pos)
+        # fish.draw_AABB(scrn_pos)
         # fish.hooked()
         fish.hang_dead()
         if (
@@ -191,22 +219,28 @@ while status:
             fish.flipped = not fish.flipped
 
         if collides(fish, r, scrn_pos) and not r.is_dropping and fist_detected:
-            if (not fish.dead):
+            if not fish.dead:
                 score += fish.pts()
 
             fish.hooked()
             if fish.flipped:
                 fish.image = pygame.transform.flip(
-                    fish.image, flip_x=True, flip_y=False
+                    fish.image, flip_x=True, flip_y=False,
                 )
 
-    r.draw()
+    if not r.is_waiting:
+        r.draw()
+
+    if r.is_waiting and triggered:
+        fishes = make_fish()
+        triggered = False
+        GAME_START = False
 
     t += 1
 
     r.fine[0] = math.cos(t / 100) * 100
 
-    r.draw_AABB()
+    # r.draw_AABB()
 
     font = pygame.font.SysFont(None, 36)
     score_surface = font.render(
@@ -218,7 +252,9 @@ while status:
             int(math.cos(t / 93) ** 2 * 255),
         ),
     )
-    scrn.blit(score_surface, (10, 10))
+    scrn.blit(score_surface, (X - score_surface.get_width() - 10, 10))
+    ct_text = font.render(f"Casts: {ct}", True, (0, 0, 0))
+    scrn.blit(ct_text, (X - ct_text.get_width() - 10, 50))
 
     # update_screen_position()
 
@@ -228,5 +264,3 @@ while status:
 
     clock.tick(60)
     pygame.display.flip()
-
-
