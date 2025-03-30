@@ -20,13 +20,10 @@ scrn = pygame.display.set_mode((X, Y))
 
 # Create a list of Fish instances
 fishes = [
-    Fish(scrn, x=100, y=100),
-    Fish(scrn, x=200, y=200),
-    Fish(scrn, x=300, y=300),
-    Fish(scrn, x=400, y=400),
+    Fish(scrn, x=100, y=600 + i*100) for i in range(10)
 ]
 
-test_fish = Fish(scrn, x=350, y=400)
+test_fish = Fish(scrn, x=350, y=401)
 
 # Create a screen position array
 scrn_pos = [0, 0]
@@ -49,6 +46,12 @@ def update_screen_position() -> None:
 # Main loop
 
 random.shuffle(fishes)
+
+r = Rod(scrn, 0, 0)
+print(r.pos)
+
+r.trigger_reel()
+
 status = True
 while status:
     for i in pygame.event.get():
@@ -58,11 +61,22 @@ while status:
     # Clear the screen
     scrn.fill((255, 255, 255))
 
+    scrn_pos = r.reel_and_drop_itr()
+    #print(scrn_pos)
+
+    # print(scrn_pos)
+
+    # test_fish.draw_AABB()
+
     # Draw the fish
     for fish in fishes:
         fish.draw(scrn_pos)
+        # fish.draw_AABB()
         if test_fish.collides(fish):
             fish.hang_dead()
+            fish.hooked()
+
+    r.draw(scrn_pos)
         
     # update_screen_position()
 

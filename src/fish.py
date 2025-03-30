@@ -44,7 +44,8 @@ class Fish(GameObject):
         :param screen_position: The position of the screen to adjust drawing.
         """
         super().__init__(
-            pygame.image.load(f"src/data/fish{random.randint(1, 3)}.png"), 0, 0
+            pygame.image.load(f"src/data/fish{random.randint(1, 3)}.png").convert_alpha()
+, 0, 0
         )
 
         self.flipped = False
@@ -95,7 +96,7 @@ class Fish(GameObject):
         )
 
         # Show the image
-        self.screen.blit(rotated_image, new_rect)
+        self.screen.blit(rotated_image, [screen_position[0] + new_rect[0], screen_position[1]+ new_rect[1]])
 
     def rotate(self, theta):
         """
@@ -122,3 +123,12 @@ class Fish(GameObject):
 
         self.orientation -= self.omega * 0.1
         #print(self.orientation)
+
+    def draw_AABB(self):
+        """
+        Draw the Axis-Aligned Bounding Box (AABB) around the fish.
+        """
+        width, height = self.size
+        x, y = self.pos
+        rect = pygame.Rect(x, y, width, height)
+        pygame.draw.rect(self.screen, (255, 0, 0), rect, 2)
