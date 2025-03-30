@@ -41,17 +41,23 @@ class GameObject:
         # if self.pos.top < 0:
         #     self.pos.top = HEIGHT - SPRITE_HEIGHT
 
-    def collides(self, other):
-        x_col = in_range(self.pos[0], other.pos[0], other.pos[0] + other.size[0])
-        x_col2 = in_range(
-            self.pos[0] + self.size[0], other.pos[0], other.pos[0] + other.size[0]
-        )
+    
+def collides(self, other, screen_position=(0, 0)):
 
-        y_col = in_range(self.pos[1], other.pos[1], other.pos[1] + other.size[1])
-        y_col2 = in_range(
-            self.pos[1] + self.size[1], other.pos[1], other.pos[1] + other.size[1]
-        )
-        return (x_col or x_col2) and (y_col or y_col2)
+    m_pos = self.get_corr_pos(screen_position)
+
+    o_pos = other.get_corr_pos(screen_position)
+    
+    m_size = self.get_corr_size()
+
+    o_size = other.get_corr_size()
+    x_col = in_range(m_pos[0], o_pos[0], o_pos[0] + o_size[0])
+    x_col2 = in_range(m_pos[0] + m_size[0], o_pos[0], o_pos[0] + o_size[0])
+
+    y_col = in_range(m_pos[1], o_pos[1], o_pos[1] + o_size[1])
+    y_col2 = in_range(m_pos[1] + m_size[1], o_pos[1], o_pos[1] + o_size[1])
+    return (x_col or x_col2) and (y_col or y_col2)
+    
     
 
 
@@ -77,6 +83,7 @@ class Rod(GameObject):
 
         self.fine = [0, 0]
         self.v = 0
+        self.render_pos = self.pos
 
 
     def draw(self, screen_position = (0, 0)) -> None:
@@ -85,13 +92,13 @@ class Rod(GameObject):
         """
         width, height = self.size
 
-        bobber_pos = (width // 2 + self.fine[0], height * 1.3)
+        bobber_pos = (width // 2 + self.fine[0], height * 1.1)
 
-        screen_center = (HEIGHT // 2, WIDTH // 2)
-        render_pos = (screen_center[0] - bobber_pos[0], screen_center[1] - bobber_pos[1])
+        screen_center = (WIDTH // 2, HEIGHT // 2)
+        self.render_pos = (screen_center[0] - bobber_pos[0], screen_center[1] - bobber_pos[1])
 
         # Show the image
-        self.screen.blit(self.image, render_pos)
+        self.screen.blit(self.image, self.render_pos)
 
     def trigger_reel(self):
         self.is_waiting = False
@@ -102,7 +109,7 @@ class Rod(GameObject):
             return self.pos
 
         if (not self.is_dropping and not self.is_reeling):
-            self.v = -15
+            self.v = -27.5
 
 
         if (self.v < 0):
@@ -114,11 +121,21 @@ class Rod(GameObject):
             self.is_dropping = False
             self.is_reeling = True
             # collision handling
-            self.pos[1] += 1.
+            self.pos[1] += 6
 
-        if (self.pos[1] >= 0):
+        if (self.pos[1] >= -955.4000000000042):
             self.is_reeling = False
             self.is_waiting = True
 
         return self.pos
+    
+    def draw_AABB(self):
+        pygame.draw.rect(self.screen, (255, 0, 0), (int((self.size[0] *.35)+self.render_pos[0]), 
+                                                    int(self.size[1] * .85 + self.render_pos[1]), 
+                                                    75, 115), 2)
         
+    def get_corr_pos(self, screen_pos):
+        return (int((self.size[0] *.35)+self.render_pos[0]), int(self.size[1] * .85 + self.render_pos[1]))
+        
+    def get_corr_size(self):
+        return (75, 115)

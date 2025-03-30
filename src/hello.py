@@ -63,7 +63,7 @@ clock = pygame.time.Clock()
 
 random.shuffle(fishes)
 
-r = Rod(scrn, 0, 0)
+r = Rod(scrn, 0, -955.4000000000042)
 print(r.pos)
 
 r.trigger_reel()
@@ -76,23 +76,24 @@ while status:
 
     # Clear the screen
     scrn.fill((255, 255, 255))
-    scrn.blit(background.image, background.pos)
-
-    background.move(up=True)
+    scrn.blit(background.image, (background.pos[0] + scrn_pos[0], background.pos[1] + scrn_pos[1]))
 
     scrn_pos = r.reel_and_drop_itr()
-    #print(scrn_pos)
-
-    # print(scrn_pos)
-
-    # test_fish.draw_AABB()
+    
 
     # Draw the fish
     for fish in fishes:
-        fish.move(up=True)
         fish.draw(scrn_pos)
-        if any(f.collides(fish) for f in fishes):
-            fish.hang_dead()
+        fish.draw_AABB(scrn_pos)
+        fish.hang_dead()
+        
+        if collides(fish, r, scrn_pos):    
+            fish.hooked()
+
+        
+
+    r.draw()
+    r.draw_AABB()
 
     # update_screen_position()
 

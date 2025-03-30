@@ -141,11 +141,21 @@ class Fish(GameObject):
         self.orientation -= self.omega * 0.1
         #print(self.orientation)
 
-    def draw_AABB(self):
+    def draw_AABB(self, screen_position=(0, 0)) -> None:
         """
         Draw the Axis-Aligned Bounding Box (AABB) around the fish.
         """
         width, height = self.size
         x, y = self.pos
+
+        x += screen_position[0]
+        y += screen_position[1]
+
         rect = pygame.Rect(x, y, width, height)
         pygame.draw.rect(self.screen, (255, 0, 0), rect, 2)
+
+    def get_corr_pos(self, screen_pos):
+        return (self.pos[0] + screen_pos[0], self.pos[1] + screen_pos[1])
+    
+    def get_corr_size(self):
+        return self.size
