@@ -104,7 +104,7 @@ class Fish(GameObject):
         else:
             self.pos[0] -= self.aimless_swim_speed
 
-    def draw(self, screen_position=(0, 0)) -> None:
+    def draw(self, screen_position=(0, 0), fine=(0,0)) -> None:
         """
         Draw the fish on the screen at its current position and orientation.
         """
@@ -126,7 +126,7 @@ class Fish(GameObject):
         else:
             screen_rect = self.screen.get_rect()
             new_rect.center = screen_rect.center
-            self.screen.blit(rotated_image, (new_rect[0], new_rect[1] - 200))
+            self.screen.blit(rotated_image, (new_rect[0] - fine[0], new_rect[1] - 200))
 
     
     
