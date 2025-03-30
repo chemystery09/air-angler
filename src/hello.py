@@ -226,6 +226,8 @@ while status:
 
     # r.draw_AABB()
 
+
+    
     font = pygame.font.SysFont(None, 36)
     score_surface = font.render(
         f"Score: {int(score)}",
