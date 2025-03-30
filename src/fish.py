@@ -104,22 +104,33 @@ class Fish(GameObject):
         else:
             self.pos[0] -= self.aimless_swim_speed
 
-    def draw(self, screen_position=(0, 0)) -> None:
+    def draw(self, screen_position=(0, 0), fine=(0,0)) -> None:
         """
         Draw the fish on the screen at its current position and orientation.
         """
+
         width, height = self.size
 
         rotated_image = pygame.transform.rotate(
             self.image, math.degrees(self.orientation)
         )
+
         new_rect = rotated_image.get_rect(
             center=self.image.get_rect(topleft=self.pos).center
         )
 
-        # Show the image
-        self.screen.blit(rotated_image, [screen_position[0] + new_rect[0], screen_position[1]+ new_rect[1]])
 
+        # Show the image
+        if (not self.dead):
+            self.screen.blit(rotated_image, [screen_position[0] + new_rect[0], screen_position[1] + new_rect[1]])
+        else:
+            screen_rect = self.screen.get_rect()
+            new_rect.center = screen_rect.center
+            self.screen.blit(rotated_image, (new_rect[0] - fine[0], new_rect[1] - 200))
+
+    
+    
+    
     def rotate(self, theta):
         """
         Rotate the fish by a given angle in radians.
@@ -140,7 +151,7 @@ class Fish(GameObject):
 
             self.omega += (
                 self.orientation - desired_orientation
-            ) * 0.001 - self.omega * 0.0025 * self.aleph
+            ) * 0.01 - self.omega * 0.025 * self.aleph
 
         self.orientation -= self.omega * 0.1
         #print(self.orientation)

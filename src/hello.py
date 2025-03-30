@@ -75,9 +75,10 @@ clock = pygame.time.Clock()
 random.shuffle(fishes)
 
 r = Rod(scrn, 0, -955.4000000000042)
-print(r.pos)
 
 r.trigger_reel()
+
+t = 0
 
 status = True
 while status:
@@ -110,7 +111,7 @@ while status:
         # else:
         #     fish.move(down=True)
 
-        fish.draw(scrn_pos)
+        fish.draw(scrn_pos, r.fine)
         fish.draw_AABB(scrn_pos)
         # fish.hooked()
         fish.hang_dead()
@@ -118,10 +119,15 @@ while status:
             fish.direction = not fish.direction
             fish.image = pygame.transform.flip(fish.image, flip_x=True)
 
-        if collides(fish, r, scrn_pos):
+        if collides(fish, r, scrn_pos) and not r.is_dropping:
             fish.hooked()
 
     r.draw()
+
+    t += 1
+    
+    r.fine[0] = math.cos(t / 100) * 100
+    
     r.draw_AABB()
 
     # update_screen_position()
