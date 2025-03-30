@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import math
 GAME_START = False
 cap = cv2.VideoCapture(0)
 mp_hands = mp.solutions.hands 
@@ -13,7 +14,6 @@ previous_x_position = None
 moving_left = False
 moving_right = False
 ok_threshold = 30
-import math
 
 while True:
     success, image = cap.read()
