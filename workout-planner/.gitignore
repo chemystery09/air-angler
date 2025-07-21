@@ -1,0 +1,7 @@
+env/
+
+*.log
+
+workout_plan.txt
+
+stats.json
